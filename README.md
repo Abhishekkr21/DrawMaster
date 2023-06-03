@@ -1,5 +1,5 @@
 # DrawMaster
-DrawMaster Pro is an advanced and feature-rich drawing application built using HTML, CSS, and JavaScript. With a comprehensive set of tools and functionalities, this web-based app provides a versatile platform for artists and designers to create stunning digital artwork with ease.
+DrawMaster is an advanced and feature-rich drawing application built using HTML, CSS, and JavaScript. With a comprehensive set of tools and functionalities, this web-based app provides a versatile platform for artists and designers to create stunning digital artwork with ease.
 Features:
 
 Intuitive Drawing Tools: DrawMaster Pro offers a wide range of drawing tools, including brushes, pencils, erasers, and shape tools (lines, rectangles, circles). Artists can freely express their creativity and experiment with different styles and techniques.
