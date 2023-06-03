@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DrawMaster - Interactive Drawing App</title>
+  <style>
+    /* CSS styling for the canvas */
+    #canvas {
+      border: 1px solid black;
+      cursor: crosshair;
+    }
+  </style>
+</head>
+<body>
+  <h1>DrawMaster - Interactive Drawing App</h1>
+
+  <canvas id="canvas" width="800" height="600"></canvas>
+
+  <div>
+    <label>Brush Size:</label>
+    <input type="range" min="1" max="20" id="brushSizeInput" value="5">
+    <br>
+    <label>Brush Color:</label>
+    <input type="color" id="brushColorInput" value="#000000">
+    <br>
+    <button id="undoButton">Undo</button>
+    <button id="redoButton">Redo</button>
+    <br>
+    <input type="file" id="imageUploadInput">
+    <button id="importButton">Import Image</button>
+    <button id="exportButton">Export Image</button>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
+
+      let isDrawing = false;
+      let lastX = 0;
+      let lastY = 0;
+
+      let brushSize = 5;
+      let brushColor = '#000000';
+
+      let layers = [];
+      let currentLayerIndex = -1;
+
+      // Keyboard shortcuts
+      document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.key === 'z') {
+          undo();
+        } else if (e.ctrlKey && e.key === 'y') {
+          redo();
+        }
+      });
+
+      // Event listeners for mouse actions
+      canvas.addEventListener('mousedown', (e) => {
+        isDrawing = true;
+        [lastX, lastY] = [e.offsetX, e.offsetY];
+      });
+
+      canvas.addEventListener('mousemove', (e) => {
+        if (!isDrawing) return;
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(e.offsetX, e.offsetY);
+        ctx.strokeStyle = brushColor;
+        ctx.lineWidth = brushSize;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+        [lastX, lastY] = [e.offsetX, e.offsetY];
+      });
+
+      canvas.addEventListener('mouseup', () => {
+        isDrawing = false;
+        saveState();
+      });
+
+      // Function to change brush size
+      const brushSizeInput = document.getElementById('brushSizeInput');
+      brushSizeInput.addEventListener('input', (e) => {
+        brushSize = e.target.value;
+      });
+
+      // Function to change brush color
+      const brushColorInput = document.getElementById('brushColorInput');
+      brushColorInput.addEventListener('input', (e) => {
+        brushColor = e.target.value;
+      });
+
+      // Undo/Redo functionality
+      const undoButton = document.getElementById('undoButton');
+      undoButton.addEventListener('click', () => {
+        undo();
+      });
+
+      const redoButton = document.getElementById('redoButton');
+      redoButton.addEventListener('click', () => {
+        redo();
+      });
+
+      function saveState() {
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        layers.splice(currentLayerIndex + 1);
+        layers.push(imageData);
+        currentLayerIndex++;
+      }
+
+      function undo() {
+        if (currentLayerIndex > 0) {
+          currentLayerIndex--;
+          ctx.putImageData(layers[currentLayerIndex], 0, 0);
+        }
+      }
+
+      function redo() {
+        if (currentLayerIndex < layers.length - 1) {
+          currentLayerIndex++;
+          ctx.putImageData(layers[currentLayerIndex], 0, 0);
+        }
+      }
+
+      // Image import/export
+      const imageUploadInput = document.getElementById('imageUploadInput');
+      imageUploadInput.addEventListener('change', (e) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const img = new Image();
+          img.onload = () => {
+            ctx.drawImage(img, 0, 0);
+            saveState();
+          };
+          img.src = reader.result;
+        };
+        reader.readAsDataURL(e.target.files[0]);
+      });
+
+      const exportButton = document.getElementById('exportButton');
+      exportButton.addEventListener('click', () => {
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = 'drawmaster-export.png';
+        link.click();
+      });
+
+      // Layer management
+      const importButton = document.getElementById('importButton');
+      importButton.addEventListener('click', () => {
+        const img = new Image();
+        img.onload = () => {
+          ctx.drawImage(img, 0, 0);
+          saveState();
+        };
+        img.src = 'image-url-here'; // Replace 'image-url-here' with the actual image URL
+      });
+    });
+  </script>
+</body>
+</html>
