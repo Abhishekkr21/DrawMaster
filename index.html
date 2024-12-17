@@ -1,159 +1,543 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>DrawMaster - Interactive Drawing App</title>
+  <title>DrawMaster Pro - Feature-Rich Drawing App</title>
   <style>
-    /* CSS styling for the canvas */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f0f2f5;
+      min-height: 100vh;
+    }
+    
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+      font-size: 2.5em;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .drawing-area {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    
     #canvas {
-      border: 1px solid black;
+      flex: 1;
+      border: none;
+      border-radius: 8px;
       cursor: crosshair;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      background-color: white;
+      max-width: 800px;
+    }
+    
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      background-color: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      width: 300px;
+    }
+    
+    .control-group {
+      grid-column: span 2;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .controls label {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 0.9em;
+    }
+    
+    .controls input[type="range"] {
+      width: 100%;
+      height: 6px;
+      -webkit-appearance: none;
+      background: #e0e0e0;
+      border-radius: 3px;
+      outline: none;
+    }
+    
+    .controls input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      background: #4caf50;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+    
+    .controls input[type="color"] {
+      width: 100%;
+      height: 40px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    
+    #toolSelect {
+      width: 100%;
+      padding: 8px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 0.9em;
+      color: #2c3e50;
+      cursor: pointer;
+      background-color: white;
+    }
+    
+    .controls button {
+      padding: 10px 15px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      font-size: 0.8em;
+      letter-spacing: 0.5px;
+    }
+    
+    .controls button:hover {
+      background-color: #45a049;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .action-buttons {
+      grid-column: span 2;
+      display: flex;
+      gap: 10px;
+    }
+    
+    .action-buttons button {
+      flex: 1;
+    }
+    
+    #clearButton {
+      background-color: #e74c3c;
+    }
+    
+    #clearButton:hover {
+      background-color: #c0392b;
+    }
+    
+    #imageUploadInput {
+      display: none;
+    }
+    
+    .upload-label {
+      display: inline-block;
+      padding: 10px 15px;
+      background-color: #3498db;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .upload-label:hover {
+      background-color: #2980b9;
     }
   </style>
 </head>
 <body>
-  <h1>DrawMaster - Interactive Drawing App</h1>
-
-  <canvas id="canvas" width="800" height="600"></canvas>
-
-  <div>
-    <label>Brush Size:</label>
-    <input type="range" min="1" max="20" id="brushSizeInput" value="5">
-    <br>
-    <label>Brush Color:</label>
-    <input type="color" id="brushColorInput" value="#000000">
-    <br>
-    <button id="undoButton">Undo</button>
-    <button id="redoButton">Redo</button>
-    <br>
-    <input type="file" id="imageUploadInput">
-    <button id="importButton">Import Image</button>
-    <button id="exportButton">Export Image</button>
+  <div class="container">
+    <h1>DrawMaster Pro - Feature-Rich Drawing App</h1>
+    
+    <div class="drawing-area">
+      <canvas id="canvas" width="800" height="600"></canvas>
+      
+      <div class="controls">
+        <div class="control-group">
+          <label for="toolSelect">Drawing Tool</label>
+          <select id="toolSelect">
+            <option value="brush">Brush</option>
+            <option value="eraser">Eraser</option>
+            <option value="rectangle">Rectangle</option>
+            <option value="circle">Circle</option>
+            <option value="line">Line</option>
+          </select>
+        </div>
+        
+        <div class="control-group">
+          <label for="brushSizeInput">Brush Size</label>
+          <input type="range" min="1" max="20" id="brushSizeInput" value="5">
+        </div>
+        
+        <div class="control-group">
+          <label for="brushColorInput">Brush Color</label>
+          <input type="color" id="brushColorInput" value="#000000">
+        </div>
+        
+        <div class="control-group">
+          <label for="fillColorInput">Fill Color</label>
+          <input type="color" id="fillColorInput" value="#ffffff">
+        </div>
+        
+        <div class="control-group">
+          <label for="opacityInput">Opacity</label>
+          <input type="range" min="0" max="100" id="opacityInput" value="100">
+        </div>
+        
+        <div class="control-group">
+          <label for="eraserSizeInput">Eraser Size</label>
+          <input type="range" min="1" max="20" id="eraserSizeInput" value="5">
+        </div>
+        
+        <div class="action-buttons">
+          <button id="undoButton">Undo</button>
+          <button id="redoButton">Redo</button>
+        </div>
+        
+        <div class="action-buttons">
+          <label class="upload-label" for="imageUploadInput">
+            Import Image
+          </label>
+          <input type="file" id="imageUploadInput">
+          <button id="exportButton">Export</button>
+        </div>
+        
+        <div class="action-buttons">
+          <button id="saveButton">Save to Gallery</button>
+          <button id="clearButton">Clear</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // Canvas setup
       const canvas = document.getElementById('canvas');
       const ctx = canvas.getContext('2d');
 
-      let isDrawing = false;
-      let lastX = 0;
-      let lastY = 0;
+      // State management
+      const state = {
+        isDrawing: false,
+        lastX: 0,
+        lastY: 0,
+        startX: 0,
+        startY: 0,
+        layers: [],
+        currentLayerIndex: -1,
+        savedDrawings: [],
+        
+        // Tool settings
+        currentTool: 'brush',
+        brushSize: 5,
+        brushColor: '#000000',
+        fillColor: '#ffffff',
+        eraserSize: 5,
+        opacity: 1,
+        
+        // Shape preview
+        previewLayer: null
+      };
 
-      let brushSize = 5;
-      let brushColor = '#000000';
-
-      let layers = [];
-      let currentLayerIndex = -1;
-
-      // Keyboard shortcuts
-      document.addEventListener('keydown', (e) => {
-        if (e.ctrlKey && e.key === 'z') {
-          undo();
-        } else if (e.ctrlKey && e.key === 'y') {
-          redo();
+      // Initialize canvas background
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Tool configuration object
+      const tools = {
+        brush: {
+          cursor: 'crosshair',
+          draw: drawFreehand,
+          beforeDraw: () => {},
+          afterDraw: () => {}
+        },
+        eraser: {
+          cursor: 'cell',
+          draw: drawFreehand,
+          beforeDraw: () => {},
+          afterDraw: () => {}
+        },
+        rectangle: {
+          cursor: 'crosshair',
+          draw: drawShape,
+          beforeDraw: savePreviewState,
+          afterDraw: restorePreviewState
+        },
+        circle: {
+          cursor: 'crosshair',
+          draw: drawShape,
+          beforeDraw: savePreviewState,
+          afterDraw: restorePreviewState
+        },
+        line: {
+          cursor: 'crosshair',
+          draw: drawShape,
+          beforeDraw: savePreviewState,
+          afterDraw: restorePreviewState
         }
-      });
+      };
 
-      // Event listeners for mouse actions
-      canvas.addEventListener('mousedown', (e) => {
-        isDrawing = true;
-        [lastX, lastY] = [e.offsetX, e.offsetY];
-      });
+      // Event Handlers
+      function handleMouseDown(e) {
+        state.isDrawing = true;
+        [state.startX, state.startY] = [e.offsetX, e.offsetY];
+        [state.lastX, state.lastY] = [state.startX, state.startY];
+        
+        const tool = tools[state.currentTool];
+        tool.beforeDraw();
+      }
 
-      canvas.addEventListener('mousemove', (e) => {
-        if (!isDrawing) return;
+      function handleMouseMove(e) {
+        if (!state.isDrawing) return;
+        
+        const tool = tools[state.currentTool];
+        tool.draw(e);
+      }
+
+      function handleMouseUp(e) {
+        if (!state.isDrawing) return;
+        
+        const tool = tools[state.currentTool];
+        tool.afterDraw();
+        
+        state.isDrawing = false;
+          saveState();
+      }
+
+      // Drawing Functions
+      function drawFreehand(e) {
         ctx.beginPath();
-        ctx.moveTo(lastX, lastY);
+        ctx.moveTo(state.lastX, state.lastY);
         ctx.lineTo(e.offsetX, e.offsetY);
-        ctx.strokeStyle = brushColor;
-        ctx.lineWidth = brushSize;
+        
+        ctx.strokeStyle = state.currentTool === 'eraser' ? '#ffffff' : state.brushColor;
+        ctx.lineWidth = state.currentTool === 'eraser' ? state.eraserSize : state.brushSize;
         ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.globalAlpha = state.opacity;
+        
         ctx.stroke();
-        [lastX, lastY] = [e.offsetX, e.offsetY];
-      });
+        [state.lastX, state.lastY] = [e.offsetX, e.offsetY];
+      }
 
-      canvas.addEventListener('mouseup', () => {
-        isDrawing = false;
-        saveState();
-      });
+      function drawShape(e) {
+        // Clear previous preview
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.putImageData(state.previewLayer, 0, 0);
+        
+        ctx.beginPath();
+        ctx.strokeStyle = state.brushColor;
+        ctx.fillStyle = state.fillColor;
+        ctx.lineWidth = state.brushSize;
+        ctx.globalAlpha = state.opacity;
 
-      // Function to change brush size
-      const brushSizeInput = document.getElementById('brushSizeInput');
-      brushSizeInput.addEventListener('input', (e) => {
-        brushSize = e.target.value;
-      });
+        switch(state.currentTool) {
+          case 'rectangle':
+            const width = e.offsetX - state.startX;
+            const height = e.offsetY - state.startY;
+            ctx.rect(state.startX, state.startY, width, height);
+            break;
+          
+          case 'circle':
+            const radius = Math.sqrt(
+              Math.pow(e.offsetX - state.startX, 2) + 
+              Math.pow(e.offsetY - state.startY, 2)
+            );
+            ctx.arc(state.startX, state.startY, radius, 0, Math.PI * 2);
+            break;
+          
+          case 'line':
+            ctx.moveTo(state.startX, state.startY);
+            ctx.lineTo(e.offsetX, e.offsetY);
+            break;
+        }
+        
+        ctx.stroke();
+        if (state.fillColor !== 'transparent') {
+          ctx.fill();
+        }
+      }
 
-      // Function to change brush color
-      const brushColorInput = document.getElementById('brushColorInput');
-      brushColorInput.addEventListener('input', (e) => {
-        brushColor = e.target.value;
-      });
+      // State Management Functions
+      function savePreviewState() {
+        state.previewLayer = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      }
 
-      // Undo/Redo functionality
-      const undoButton = document.getElementById('undoButton');
-      undoButton.addEventListener('click', () => {
-        undo();
-      });
-
-      const redoButton = document.getElementById('redoButton');
-      redoButton.addEventListener('click', () => {
-        redo();
-      });
+      function restorePreviewState() {
+        state.previewLayer = null;
+      }
 
       function saveState() {
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        layers.splice(currentLayerIndex + 1);
-        layers.push(imageData);
-        currentLayerIndex++;
+        state.layers.splice(state.currentLayerIndex + 1);
+        state.layers.push(imageData);
+        state.currentLayerIndex++;
+        updateUndoRedoButtons();
       }
 
       function undo() {
-        if (currentLayerIndex > 0) {
-          currentLayerIndex--;
-          ctx.putImageData(layers[currentLayerIndex], 0, 0);
+        if (state.currentLayerIndex > 0) {
+          state.currentLayerIndex--;
+          ctx.putImageData(state.layers[state.currentLayerIndex], 0, 0);
+          updateUndoRedoButtons();
         }
       }
 
       function redo() {
-        if (currentLayerIndex < layers.length - 1) {
-          currentLayerIndex++;
-          ctx.putImageData(layers[currentLayerIndex], 0, 0);
+        if (state.currentLayerIndex < state.layers.length - 1) {
+          state.currentLayerIndex++;
+          ctx.putImageData(state.layers[state.currentLayerIndex], 0, 0);
+          updateUndoRedoButtons();
         }
       }
 
-      // Image import/export
-      const imageUploadInput = document.getElementById('imageUploadInput');
-      imageUploadInput.addEventListener('change', (e) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const img = new Image();
-          img.onload = () => {
-            ctx.drawImage(img, 0, 0);
-            saveState();
-          };
-          img.src = reader.result;
-        };
-        reader.readAsDataURL(e.target.files[0]);
+      // UI Update Functions
+      function updateUndoRedoButtons() {
+        document.getElementById('undoButton').disabled = state.currentLayerIndex <= 0;
+        document.getElementById('redoButton').disabled = state.currentLayerIndex >= state.layers.length - 1;
+      }
+
+      function updateCursor() {
+        canvas.style.cursor = tools[state.currentTool].cursor;
+      }
+
+      // Event Listeners
+      canvas.addEventListener('mousedown', handleMouseDown);
+      canvas.addEventListener('mousemove', handleMouseMove);
+      canvas.addEventListener('mouseup', handleMouseUp);
+      canvas.addEventListener('mouseout', () => {
+        state.isDrawing = false;
       });
 
-      const exportButton = document.getElementById('exportButton');
-      exportButton.addEventListener('click', () => {
+      // Tool Controls
+      document.getElementById('toolSelect').addEventListener('change', (e) => {
+        state.currentTool = e.target.value;
+        updateCursor();
+      });
+
+      document.getElementById('brushSizeInput').addEventListener('input', (e) => {
+        state.brushSize = parseInt(e.target.value);
+      });
+
+      document.getElementById('brushColorInput').addEventListener('input', (e) => {
+        state.brushColor = e.target.value;
+      });
+
+      document.getElementById('fillColorInput').addEventListener('input', (e) => {
+        state.fillColor = e.target.value;
+      });
+
+      document.getElementById('eraserSizeInput').addEventListener('input', (e) => {
+        state.eraserSize = parseInt(e.target.value);
+      });
+
+      document.getElementById('opacityInput').addEventListener('input', (e) => {
+        state.opacity = parseInt(e.target.value) / 100;
+      });
+
+      // Action Buttons
+      document.getElementById('clearButton').addEventListener('click', () => {
+        if (confirm('Are you sure you want to clear the canvas?')) {
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          saveState();
+        }
+      });
+
+      document.getElementById('undoButton').addEventListener('click', undo);
+      document.getElementById('redoButton').addEventListener('click', redo);
+
+      // File Operations
+      document.getElementById('exportButton').addEventListener('click', () => {
         const link = document.createElement('a');
+        link.download = 'drawmaster-' + new Date().toISOString() + '.png';
         link.href = canvas.toDataURL('image/png');
-        link.download = 'drawmaster-export.png';
         link.click();
       });
 
-      // Layer management
-      const importButton = document.getElementById('importButton');
-      importButton.addEventListener('click', () => {
-        const img = new Image();
-        img.onload = () => {
-          ctx.drawImage(img, 0, 0);
-          saveState();
-        };
-        img.src = 'image-url-here'; // Replace 'image-url-here' with the actual image URL
+      document.getElementById('imageUploadInput').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            // Scale image to fit canvas while maintaining aspect ratio
+            const scale = Math.min(
+              canvas.width / img.width,
+              canvas.height / img.height
+            );
+            const x = (canvas.width - img.width * scale) / 2;
+            const y = (canvas.height - img.height * scale) / 2;
+            
+            ctx.drawImage(img, x, y, img.width * scale, img.height * scale);
+            saveState();
+          };
+          img.src = event.target.result;
+        }
       });
+
+      // Gallery Management
+      document.getElementById('saveButton').addEventListener('click', () => {
+        const drawing = {
+          id: Date.now(),
+          data: canvas.toDataURL(),
+          date: new Date().toISOString()
+        };
+        state.savedDrawings.push(drawing);
+        localStorage.setItem('drawmaster-gallery', JSON.stringify(state.savedDrawings));
+        alert('Drawing saved to gallery!');
+      });
+
+      // Keyboard Shortcuts
+      document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey) {
+          switch(e.key.toLowerCase()) {
+            case 'z':
+              e.preventDefault();
+              undo();
+              break;
+            case 'y':
+              e.preventDefault();
+              redo();
+              break;
+            case 's':
+              e.preventDefault();
+              document.getElementById('saveButton').click();
+              break;
+          }
+        }
+      });
+
+      // Initialize
+      function init() {
+        // Load saved drawings
+        const savedGallery = localStorage.getItem('drawmaster-gallery');
+        if (savedGallery) {
+          state.savedDrawings = JSON.parse(savedGallery);
+        }
+        
+        // Initialize first state
+      saveState();
+        updateCursor();
+        updateUndoRedoButtons();
+      }
+
+      init();
     });
   </script>
 </body>
